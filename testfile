@@ -1,0 +1,14 @@
+[Unit]
+Description=PostgreSQL Instance 3
+After=network.target
+
+[Service]
+Type=forking
+User=postgres
+Group=postgres
+ExecStart=/usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/instance3 -l /var/lib/postgresql/instance3/logfile start
+ExecStop=/usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/instance3 stop
+ExecReload=/usr/lib/postgresql/16/bin/pg_ctl -D /var/lib/postgresql/instance3 reload
+
+[Install]
+WantedBy=multi-user.target

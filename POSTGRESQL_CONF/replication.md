@@ -12,6 +12,10 @@ You have two fresh PostgreSQL instances:
 ```bash
 sudo systemctl start postgresql-instance1
 ```
+or
+```bash
+sudo -u postgres /usr/lib/postgresql/*/bin/pg_ctl -D /var/lib/postgresql/instance1 -l /var/lib/postgresql/instance1/logfile start
+```
 
 ### Create replication user
 ```bash
