@@ -57,3 +57,15 @@ sudo -u redis redis-sentinel /etc/redis/sentinel/sentinel-26381.conf
 ```bash
 redis-cli -p 26379 SENTINEL get-master-addr-by-name mymaster
 ```
+
+
+
+# In case permissions dont work
+
+```
+sudo chown redis:redis /etc/redis/sentinel/*.conf
+sudo chmod 640 /etc/redis/sentinel/*.conf
+
+sudo chown -R redis:redis /etc/redis/sentinel
+
+```
