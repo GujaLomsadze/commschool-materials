@@ -108,25 +108,7 @@ if __name__ == "__main__":
     # Initialize subscriber
     sub = RedisSubscriber(host='localhost', port=6379)
 
-
-    # Setup graceful shutdown
-    def signal_handler(sig, frame):
-        print("\nShutting down gracefully...")
-        sub.stop()
-        sys.exit(0)
-
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-
     # Example 1: Subscribe to specific channels
     sub.subscribe("test-channel", "test-channel:json")
 
-    # Example 2: Subscribe to pattern (all channels starting with "ship_")
-    # sub.psubscribe("ship_*")
-
-    # Example 3: Subscribe with custom handler
-    # sub.listen(message_handler=custom_message_handler)
-
-    # Start listening (blocking)
     sub.listen()

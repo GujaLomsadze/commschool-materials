@@ -46,7 +46,6 @@ if __name__ == "__main__":
         subscribers = pub.publish(channel, f"Message {i}")
         print(f"Published message {i} to {subscribers} subscribers")
 
-        # JSON message with structured data
         data = {
             "speed": 12.5 + i * 0.5,
         }
