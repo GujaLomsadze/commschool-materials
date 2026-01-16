@@ -2,3 +2,6 @@
 
 IGNORE/*
 IGNORE/
+
+Apache Airflow/logs*
+Apache Airflow/plugins

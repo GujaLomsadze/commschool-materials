@@ -42,6 +42,6 @@ while True:
     # Trigger callbacks
     producer.poll(0)
 
-    time.sleep(0.1)
+    time.sleep(0.01)
 
 producer.flush()
