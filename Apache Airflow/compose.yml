@@ -14,6 +14,8 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
   #    _PIP_ADDITIONAL_REQUIREMENTS: "clickhouse-driver confluent-kafka pytz avro fastavro"
 
+    AIRFLOW_CONFIG: /opt/airflow/config/airflow.cfg
+
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
