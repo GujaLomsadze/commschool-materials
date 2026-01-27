@@ -7,25 +7,18 @@ from datetime import datetime
 def run_job(**context):
     p = context["params"]
 
-    name = p["name"]
     repeat = p["repeat"]
     debug = p["debug"]
+    is_manual = p["is_manual"]
     threshold = p["threshold"]
 
-    for i in range(repeat):
-        print(f"[{i + 1}] Hello {name}!")
-
-    print(f"Threshold is set to: {threshold}")
-
-    if debug:
-        print("✅ DEBUG MODE ENABLED")
-        print("All params:", p)
+    print(is_manual)
 
 
 with DAG(
         dag_id="example_params_with_validation",
         start_date=datetime(2025, 1, 1),
-        schedule=None,
+        schedule="* * * * *",
         catchup=False,
         tags=["teaching", "params", "validation"],
 
@@ -54,6 +47,11 @@ with DAG(
                 default=False,
                 type="boolean",
                 description="If true, print extra debug details",
+            ),
+            "is_manual": Param(
+                default=False,
+                type="boolean",
+                description="",
             ),
             "threshold": Param(
                 default=0.8,

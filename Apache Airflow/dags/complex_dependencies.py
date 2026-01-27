@@ -76,11 +76,11 @@ with DAG(
         trigger_rule="all_success",  # only if everything before succeeded
     )
 
-    t_notify_failure = PythonOperator(
-        task_id="notify_failure",
-        python_callable=notify_failure,
-        trigger_rule="one_failed",  # runs if ANY upstream failed
-    )
+    # t_notify_failure = PythonOperator(
+    #     task_id="notify_failure",
+    #     python_callable=notify_failure,
+    #     trigger_rule="one_failed",  # runs if ANY upstream failed
+    # )
 
     # ---- Dependencies (complex graph) ----
     t_start >> [t_extract_a, t_extract_b]
@@ -96,13 +96,13 @@ with DAG(
 
     # success notification if whole pipeline succeeded
     t_load >> t_notify_success
-
-    # failure notification watches everything upstream (common real-world pattern)
-    [
-        t_extract_a,
-        t_extract_b,
-        t_transform_a,
-        t_transform_b,
-        t_validate,
-        t_load,
-    ] >> t_notify_failure
+    #
+    # # failure notification watches everything upstream (common real-world pattern)
+    # [
+    #     t_extract_a,
+    #     t_extract_b,
+    #     t_transform_a,
+    #     t_transform_b,
+    #     t_validate,
+    #     t_load,
+    # ] >> t_notify_failure
