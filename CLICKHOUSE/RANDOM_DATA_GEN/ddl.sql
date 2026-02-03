@@ -35,19 +35,18 @@ SETTINGS index_granularity = 8192;
 
 CREATE TABLE ecommerce_transactions2
 (
-    transaction_id     UInt64 CODEC(ZSTD(1)),
-    order_id           UUID CODEC(ZSTD(1)),
-    user_id            UInt64 CODEC(ZSTD(1)),
-    product_id         UInt64 CODEC(ZSTD(1)),
-    quantity           UInt8 CODEC(ZSTD(1)),
-    price              Decimal(10, 2) CODEC(ZSTD(1)),
-    total_amount       Decimal(10, 2) CODEC(ZSTD(1)),
-    currency           LowCardinality(String) CODEC(ZSTD(1)),
-    payment_method     LowCardinality(String) CODEC(ZSTD(1)),
-    transaction_status LowCardinality(String) CODEC(ZSTD(1)),
-    created_at         DateTime CODEC(Delta, ZSTD(1))
-)
-ENGINE = MergeTree
+    transaction_id     UInt64 CODEC(ZSTD(19)),
+    order_id           UUID CODEC(ZSTD(19)),
+    user_id            UInt64 CODEC(ZSTD(19)),
+    product_id         UInt64 CODEC(ZSTD(19)),
+    quantity           UInt8 CODEC(ZSTD(19)),
+    price              Decimal(10, 2) CODEC(ZSTD(19)),
+    total_amount       Decimal(10, 2) CODEC(ZSTD(19)),
+    currency           LowCardinality(String) CODEC(ZSTD(19)),
+    payment_method     LowCardinality(String) CODEC(ZSTD(19)),
+    transaction_status LowCardinality(String) CODEC(ZSTD(19)),
+    created_at         DateTime CODEC(Delta, ZSTD(19))
+) ENGINE = MergeTree
 PARTITION BY toYYYYMM(created_at)
 ORDER BY (created_at, user_id)
 SETTINGS index_granularity = 8192;

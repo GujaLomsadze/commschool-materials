@@ -54,7 +54,7 @@ def insert_worker(worker_id: int):
     client = Client(**CLICKHOUSE_CONFIG)
 
     insert_sql = """
-        INSERT INTO ecommerce_transactions (
+        INSERT INTO ecommerce_transactions2 (
             transaction_id,
             order_id,
             user_id,
