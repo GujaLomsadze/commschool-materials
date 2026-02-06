@@ -13,7 +13,7 @@ CLICKHOUSE_CONFIG = {
     "port": 9000,
     "database": "default",
     "user": "default",
-    "password": "123",
+    "password": "",
 }
 
 ROWS_PER_BATCH = 10_000      # ClickHouse likes BIG batches

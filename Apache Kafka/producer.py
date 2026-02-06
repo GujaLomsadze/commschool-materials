@@ -6,7 +6,7 @@ import time
 
 # Configuration
 conf = {
-    'bootstrap.servers': '127.0.0.1:9092,127.0.0.1:19092,127.0.0.1:29092',
+    'bootstrap.servers': 'localhost:19092,localhost:19094,localhost:19096',
     'client.id': 'test-producer',
     'acks': 'all',
     'retries': 3,
@@ -41,7 +41,6 @@ while True:
 
     # Trigger callbacks
     producer.poll(0)
+    producer.flush()
 
     time.sleep(0.01)
-
-producer.flush()
