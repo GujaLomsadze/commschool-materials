@@ -3,13 +3,13 @@ import json
 
 conf = {
     'bootstrap.servers': '127.0.0.1:9092,127.0.0.1:19092,127.0.0.1:29092',
-    'group.id': 'telemetry-processors-2',
+    'group.id': 'telemetry-processors-3',
     'auto.offset.reset': 'latest',
     'enable.auto.commit': False
 }
 
 consumer = Consumer(conf)
-consumer.subscribe(['vessel-telemetry'])
+consumer.subscribe(['test-transactions'])
 
 print("Listening for messages...")
 

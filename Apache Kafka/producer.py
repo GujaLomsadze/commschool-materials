@@ -43,4 +43,4 @@ while True:
     producer.poll(0)
     producer.flush()
 
-    time.sleep(0.01)
+    time.sleep(0.5)

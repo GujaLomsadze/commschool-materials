@@ -1,9 +1,10 @@
 import os
 import uuid
 import random
+import time
 import psycopg2
 from psycopg2.extras import execute_values
-from datetime import datetime, timedelta
+from datetime import datetime
 from multiprocessing import Process, cpu_count
 
 # ==============================
@@ -17,24 +18,30 @@ DB_CONFIG = {
     "password": "123",
 }
 
-ROWS_PER_BATCH = 10_000  # tune this (5k–50k)
-BATCHES_PER_PROCESS = 100  # total rows per process = ROWS_PER_BATCH * BATCHES_PER_PROCESS
+ROWS_PER_BATCH = 10          # live inserts
+SLEEP_SECONDS = 0.5          # throttle speed
+WORKERS = 8
 
 CURRENCIES = ["USD", "EUR", "GBP"]
 PAYMENT_METHODS = ["card", "paypal", "apple_pay", "google_pay"]
 STATUSES = ["paid", "pending", "failed", "refunded"]
 
 
-# ==============================
-# DATA GENERATOR
-# ==============================
+from zoneinfo import ZoneInfo   # Python 3.9+
+
+TBILISI_TZ = ZoneInfo("Asia/Tbilisi")
+
 def generate_row():
     quantity = random.randint(1, 5)
     price = round(random.uniform(5, 500), 2)
     total = round(quantity * price, 2)
 
+    # Generate local Tbilisi time, then convert to UTC
+    local_time = datetime.now(TBILISI_TZ)
+    utc_time = local_time.astimezone(ZoneInfo("UTC"))
+
     return (
-        str(uuid.uuid4()),                 # order_id ✅ FIXED
+        str(uuid.uuid4()),
         random.randint(1, 5_000_000),
         random.randint(1, 1_000_000),
         quantity,
@@ -43,9 +50,7 @@ def generate_row():
         random.choice(CURRENCIES),
         random.choice(PAYMENT_METHODS),
         random.choice(STATUSES),
-        datetime.utcnow() - timedelta(
-            seconds=random.randint(0, 60 * 60 * 24 * 365)
-        ),
+        utc_time,   # store UTC
     )
 
 
@@ -58,29 +63,35 @@ def insert_worker(worker_id: int):
     cur = conn.cursor()
 
     insert_sql = """
-                 INSERT INTO ecommerce_transactions (order_id,
-                                                     user_id,
-                                                     product_id,
-                                                     quantity,
-                                                     price,
-                                                     total_amount,
-                                                     currency,
-                                                     payment_method,
-                                                     transaction_status,
-                                                     created_at)
-                 VALUES %s \
-                 """
+        INSERT INTO ecommerce_transactions (
+            order_id,
+            user_id,
+            product_id,
+            quantity,
+            price,
+            total_amount,
+            currency,
+            payment_method,
+            transaction_status,
+            created_at
+        ) VALUES %s
+    """
 
     total_inserted = 0
 
     try:
-        for batch in range(BATCHES_PER_PROCESS):
+        while True:
             rows = [generate_row() for _ in range(ROWS_PER_BATCH)]
-            execute_values(cur, insert_sql, rows, page_size=ROWS_PER_BATCH)
+            execute_values(cur, insert_sql, rows)
             conn.commit()
-            total_inserted += len(rows)
 
-            print(f"[Worker {worker_id}] Inserted {total_inserted:,} rows")
+            total_inserted += len(rows)
+            print(f"[Worker {worker_id}] Total inserted: {total_inserted:,}")
+
+            time.sleep(SLEEP_SECONDS)
+
+    except KeyboardInterrupt:
+        print(f"[Worker {worker_id}] Stopped")
 
     except Exception as e:
         conn.rollback()
@@ -95,16 +106,16 @@ def insert_worker(worker_id: int):
 # MAIN
 # ==============================
 if __name__ == "__main__":
-    workers = cpu_count()
-    print(f"Starting {workers} processes")
+    print(f"Starting {WORKERS} live workers")
 
     processes = []
-    for i in range(workers):
+    for i in range(WORKERS):
         p = Process(target=insert_worker, args=(i,))
         p.start()
         processes.append(p)
 
-    for p in processes:
-        p.join()
-
-    print("🔥 Data generation complete")
+    try:
+        for p in processes:
+            p.join()
+    except KeyboardInterrupt:
+        print("🛑 Shutting down workers...")
