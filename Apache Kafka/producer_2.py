@@ -50,4 +50,4 @@ while True:
 
     producer.poll(0)  # trigger delivery callbacks
 
-    time.sleep(random.uniform(0.1, 1.0))  # non-uniform traffic
+    time.sleep(random.uniform(0.01, 0.4))  # non-uniform traffic

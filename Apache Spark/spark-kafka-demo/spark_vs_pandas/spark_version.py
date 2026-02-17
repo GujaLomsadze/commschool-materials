@@ -31,8 +31,9 @@ df.show()
 # ---------- Filtering (like df[df["amount"] > 500]) ----------
 
 print("\n=== Filter amount > 500 ===")
-filtered_df = df.filter(col("amount") > 500)
-filtered_df.show()
+filtered_df = df.filter(col("amount") > 500) # LAZY Evaluation
+# აქ ვარ
+
 
 # ---------- Select Columns ----------
 
@@ -42,15 +43,12 @@ df.select("user_id", "amount").show()
 # ---------- GroupBy + Sum ----------
 
 print("\n=== Sum amount per user ===")
-df.groupBy("user_id") \
-    .agg(_sum("amount").alias("total_amount")) \
-    .show()
+df.groupBy("user_id").agg(_sum("amount").alias("total_amount")).show()
 
 # ---------- GroupBy + Multiple Aggregations ----------
 
 print("\n=== Multiple aggregations per user ===")
-df.groupBy("user_id") \
-    .agg(
+df.groupBy("user_id").agg(
     _sum("amount").alias("total_amount"),
     avg("amount").alias("avg_amount"),
     count("*").alias("num_transactions")

@@ -35,8 +35,6 @@ def main():
         .selectExpr("CAST(value AS STRING) AS message")
         .writeStream
         .format("console")
-        .outputMode("append")
-        .option("truncate", False)
         .start()
     )
 
